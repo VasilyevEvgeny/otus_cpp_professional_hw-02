@@ -8,19 +8,19 @@
 class IpAddress {
 public:
     IpAddress() = delete;
-    IpAddress(int n1, int n2, int n3, int n4) 
+    IpAddress(size_t n1, size_t n2, size_t n3, size_t n4) 
     : n1_(n1), n2_(n2), n3_(n3), n4_(n4) {}
 
-    int get_n1() const { return n1_; }
-    int get_n2() const { return n2_; }
-    int get_n3() const { return n3_; }
-    int get_n4() const { return n4_; }
+    size_t get_n1() const { return n1_; }
+    size_t get_n2() const { return n2_; }
+    size_t get_n3() const { return n3_; }
+    size_t get_n4() const { return n4_; }
 
 private:
-    int n1_;
-    int n2_;
-    int n3_;
-    int n4_;
+    size_t n1_;
+    size_t n2_;
+    size_t n3_;
+    size_t n4_;
 };
 
 class IpAddressPool {
@@ -41,10 +41,10 @@ public:
         numbers.push_back(std::stoi(substr));
 
         data_.emplace_back(
-            static_cast<int>(numbers[0]),
-            static_cast<int>(numbers[1]),
-            static_cast<int>(numbers[2]),
-            static_cast<int>(numbers[3])
+            static_cast<size_t>(numbers[0]),
+            static_cast<size_t>(numbers[1]),
+            static_cast<size_t>(numbers[2]),
+            static_cast<size_t>(numbers[3])
         );
 
         std::sort(data_.begin(), data_.end(), [](const IpAddress& lhs, const IpAddress& rhs){
@@ -119,7 +119,7 @@ int main(int argc, char const *argv[]) {
 
     std::cout << ip_address_pool.filter(1) << std::endl;
     std::cout << ip_address_pool.filter(46, 70) << std::endl;
-    std::cout << ip_address_pool.filter_any(46);
+    std::cout << ip_address_pool.filter_any(46) << std::endl;
     
     return 0;
 }
