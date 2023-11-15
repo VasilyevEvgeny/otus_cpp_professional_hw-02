@@ -3,24 +3,37 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <array>
 
+static constexpr auto N_BYTES = 4U;
 
 class IpAddress {
 public:
     IpAddress() = delete;
-    IpAddress(size_t n1, size_t n2, size_t n3, size_t n4) 
-    : n1_(n1), n2_(n2), n3_(n3), n4_(n4) {}
+    IpAddress(size_t byte_1, size_t byte_2, size_t byte_3, size_t byte_4) 
+    : ip_address_{byte_1, byte_2, byte_3, byte_4} {}
 
-    size_t get_n1() const { return n1_; }
-    size_t get_n2() const { return n2_; }
-    size_t get_n3() const { return n3_; }
-    size_t get_n4() const { return n4_; }
+    bool operator< (const IpAddress& other) {
+        return get_byte_1() != other.get_byte_1() ? get_byte_1() > other.get_byte_1() :
+                get_byte_2() != other.get_byte_2() ? get_byte_2() > other.get_byte_2() :
+                get_byte_3() != other.get_byte_3() ? get_byte_3() > other.get_byte_3() : 
+                get_byte_4() > other.get_byte_4();
+    }
+
+    bool operator== (const IpAddress& other) {
+        return get_byte_1() == other.get_byte_1() && \
+                get_byte_2() == other.get_byte_2() && \
+                get_byte_3() == other.get_byte_3() && \
+                get_byte_4() == other.get_byte_4();
+    }
+
+    size_t get_byte_1() const { return ip_address_[0]; }
+    size_t get_byte_2() const { return ip_address_[1]; }
+    size_t get_byte_3() const { return ip_address_[2]; }
+    size_t get_byte_4() const { return ip_address_[3]; }
 
 private:
-    size_t n1_;
-    size_t n2_;
-    size_t n3_;
-    size_t n4_;
+    std::array<size_t, N_BYTES> ip_address_;
 };
 
 class IpAddressPool {
@@ -47,19 +60,14 @@ public:
             static_cast<size_t>(numbers[3])
         );
 
-        std::sort(data_.begin(), data_.end(), [](const IpAddress& lhs, const IpAddress& rhs){
-            return lhs.get_n1() != rhs.get_n1() ? lhs.get_n1() > rhs.get_n1() :
-                lhs.get_n2() != rhs.get_n2() ? lhs.get_n2() > rhs.get_n2() :
-                lhs.get_n3() != rhs.get_n3() ? lhs.get_n3() > rhs.get_n3() : 
-                lhs.get_n4() > rhs.get_n4();
-        });
+        std::sort(data_.begin(), data_.end());
     }
 
     std::vector<IpAddress> filter(int n1) {
         std::vector<IpAddress> res;
         std::copy_if (data_.begin(), data_.end(), std::back_inserter(res), 
             [n1](const IpAddress& ip_address){
-                return ip_address.get_n1() == n1;
+                return ip_address.get_byte_1() == n1;
         });
 
         return res;
@@ -69,7 +77,7 @@ public:
         std::vector<IpAddress> res;
         std::copy_if (data_.begin(), data_.end(), std::back_inserter(res), 
             [n1, n2](const IpAddress& ip_address){
-                return ip_address.get_n1() == n1 && ip_address.get_n2() == n2;
+                return ip_address.get_byte_1() == n1 && ip_address.get_byte_2() == n2;
         });
 
         return res;
@@ -79,8 +87,8 @@ public:
         std::vector<IpAddress> res;
         std::copy_if (data_.begin(), data_.end(), std::back_inserter(res), 
             [n](const IpAddress& ip_address){
-                return ip_address.get_n1() == n || ip_address.get_n2() == n 
-                    || ip_address.get_n3() == n || ip_address.get_n4() == n;
+                return ip_address.get_byte_1() == n || ip_address.get_byte_2() == n 
+                    || ip_address.get_byte_3() == n || ip_address.get_byte_4() == n;
         });
 
         return res;
@@ -91,8 +99,8 @@ private:
 };
 
 std::ostream& operator<<(std::ostream& os, const IpAddress& ip_address) {
-    os << ip_address.get_n1() << "." << ip_address.get_n2() << "." <<
-        ip_address.get_n3() << "." << ip_address.get_n4();
+    os << ip_address.get_byte_1() << "." << ip_address.get_byte_2() << "." <<
+        ip_address.get_byte_3() << "." << ip_address.get_byte_4();
     
     return os;
 }
